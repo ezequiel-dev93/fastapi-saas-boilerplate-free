@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Invitación para unirte a {{ org_name }} - {{ project_name }}{% endblock %}
+
+{% block content %}
+<h2>Te han invitado a unirte a un equipo 🤝</h2>
+<p>Hola{% if recipient_name %} <strong>{{ recipient_name }}</strong>{% endif %},</p>
+<p><strong>{{ inviter_name }}</strong> te ha invitado a colaborar y formar parte de su espacio de trabajo en <strong>{{ project_name }}</strong>.</p>
+
+<div class="info-card">
+  <div class="info-row">
+    <span class="info-label">Organización</span>
+    <span class="info-value">{{ org_name }}</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Invitado por</span>
+    <span class="info-value">{{ inviter_name }}</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Rol asignado</span>
+    <span class="info-value"><span class="badge badge-indigo">{{ role }}</span></span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Vigencia</span>
+    <span class="info-value">7 días naturales</span>
+  </div>
+</div>
+
+<p>Al unirte, tendrás acceso inmediato a los proyectos, herramientas y recursos compartidos de la organización.</p>
+
+<div class="button-container">
+  <a href="{{ invite_url }}" class="email-button">Aceptar Invitación y Unirme</a>
+</div>
+
+<p style="font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 0;">
+  Este enlace de invitación expirará automáticamente en 7 días. Si no reconoces a quien te envía esta invitación, puedes ignorar este mensaje de forma segura.
+</p>
+{% endblock %}

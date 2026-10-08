@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}¡Bienvenido a tu Prueba Gratuita! - {{ project_name }}{% endblock %}
+
+{% block content %}
+<h2>¡Tu período de prueba de 14 días ha comenzado! 🚀</h2>
+<p>Hola{% if user_name %} <strong>{{ user_name }}</strong>{% endif %},</p>
+<p>Te damos la bienvenida a <strong>{{ project_name }}</strong>. Hemos activado tu período de prueba gratuito para que experimentes todo el potencial de nuestra plataforma sin restricciones.</p>
+
+<div class="info-card">
+  <div class="info-row">
+    <span class="info-label">Estado de la cuenta</span>
+    <span class="info-value"><span class="badge badge-emerald">Prueba Activa</span></span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Duración</span>
+    <span class="info-value">14 días de acceso total</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Tarjeta requerida</span>
+    <span class="info-value">No requerida durante la prueba</span>
+  </div>
+</div>
+
+<p><strong>Lo que puedes hacer hoy mismo:</strong></p>
+<ul style="margin: 0 0 20px 0; padding-left: 20px; color: #475569; font-size: 14px; line-height: 1.8;">
+  <li>Crear y gestionar organizaciones y equipos de trabajo.</li>
+  <li>Generar tus claves de API para conectar tus sistemas.</li>
+  <li>Explorar las integraciones y funcionalidades avanzadas.</li>
+</ul>
+
+<div class="button-container">
+  <a href="{{ dashboard_url|default('http://localhost:3000/dashboard') }}" class="email-button">Acceder a mi Panel de Control</a>
+</div>
+
+<p style="font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 0;">
+  ¿Tienes preguntas para comenzar o necesitas asistencia técnica? Responde directamente a este correo y nuestro equipo te ayudará.
+</p>
+{% endblock %}

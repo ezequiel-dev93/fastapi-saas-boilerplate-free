@@ -1,0 +1,3232 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI SaaS Boilerplate",
+    "description": "Boilerplate backend para aplicaciones SaaS con FastAPI, AWS Cognito y pagos con Stripe.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/auth/dev-users": {
+      "get": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "List Dev Users",
+        "description": "Retorna la lista de usuarios locales para inicio de sesión rápido en desarrollo.\nEstrictamente prohibido y deshabilitado (404) en producción.",
+        "operationId": "list_dev_users_api_v1_auth_dev_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DevUserRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Dev Users Api V1 Auth Dev Users Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/dev-login": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Dev Login",
+        "description": "Genera un JWT válido para el usuario especificado en entorno de desarrollo.\nSi el usuario no existe en la base de datos local, lo aprovisiona automáticamente.\nEstrictamente prohibido y deshabilitado (404) en producción.",
+        "operationId": "dev_login_api_v1_auth_dev_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DevLoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Get User Me",
+        "description": "Obtiene el perfil completo y configuración del usuario autenticado actual.",
+        "operationId": "get_user_me_api_v1_users_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Update User Profile",
+        "description": "Actualiza la información del perfil (nombre y apellido).",
+        "operationId": "update_user_profile_api_v1_users_me_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/me/export": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Export User Data",
+        "description": "Exporta todos los datos personales asociados al usuario (GDPR Art. 15 y 20).",
+        "operationId": "export_user_data_api_v1_users_me_export_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDataExport"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/me/account": {
+      "delete": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Delete User Account",
+        "description": "Suprime la cuenta del usuario cumpliendo con el Derecho al Olvido (GDPR Art. 17).\nValida precondiciones (suscripciones activas, organizaciones), anonimiza el perfil,\npreserva las API keys para no romper integraciones de las organizaciones, y encola la baja en el IdP.",
+        "operationId": "delete_user_account_api_v1_users_me_account_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDeletionResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/settings": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Get User Settings",
+        "description": "Obtiene las preferencias de notificación y estado de suscripción del usuario.",
+        "operationId": "get_user_settings_api_v1_users_settings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSettingsRead"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Update User Settings",
+        "description": "Actualiza las preferencias de notificaciones.",
+        "operationId": "update_user_settings_api_v1_users_settings_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSettingsUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSettingsRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/trial": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Start Trial",
+        "description": "Inicia un período de prueba gratuito de 14 días verificando que no haya sido consumido.",
+        "operationId": "start_trial_api_v1_users_trial_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/billing/plans": {
+      "get": {
+        "tags": [
+          "Facturación y Pagos"
+        ],
+        "summary": "List Subscription Plans",
+        "description": "Lista todos los planes de suscripción activos disponibles para contratar.",
+        "operationId": "list_subscription_plans_api_v1_billing_plans_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SubscriptionPlanRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Subscription Plans Api V1 Billing Plans Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/billing/checkout": {
+      "post": {
+        "tags": [
+          "Facturación y Pagos"
+        ],
+        "summary": "Create Subscription",
+        "description": "Crea una nueva suscripción en Stripe utilizando un PaymentMethod ID.",
+        "operationId": "create_subscription_api_v1_billing_checkout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/billing/subscription": {
+      "get": {
+        "tags": [
+          "Facturación y Pagos"
+        ],
+        "summary": "Get Subscription Status",
+        "description": "Obtiene el estado actual de suscripción y facturación del usuario autenticado.",
+        "operationId": "get_subscription_status_api_v1_billing_subscription_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionStatusResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/billing/cancel": {
+      "post": {
+        "tags": [
+          "Facturación y Pagos"
+        ],
+        "summary": "Cancel Subscription",
+        "description": "Cancela la suscripción al final del ciclo actual para mantener el acceso pagado.",
+        "operationId": "cancel_subscription_api_v1_billing_cancel_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/billing/portal": {
+      "post": {
+        "tags": [
+          "Facturación y Pagos"
+        ],
+        "summary": "Create Customer Portal",
+        "description": "Genera una URL de sesión temporal del Customer Portal para autogestión de facturación.",
+        "operationId": "create_customer_portal_api_v1_billing_portal_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerPortalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerPortalResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/billing/webhook": {
+      "post": {
+        "tags": [
+          "Facturación y Pagos"
+        ],
+        "summary": "Stripe Webhook",
+        "description": "Procesa eventos webhook asíncronos de Stripe de forma segura e idempotente.",
+        "operationId": "stripe_webhook_api_v1_billing_webhook_post",
+        "parameters": [
+          {
+            "name": "stripe-signature",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Stripe-Signature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations": {
+      "get": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "List User Organizations",
+        "description": "Lista organizaciones accesibles.\n\n- JWT: todas las organizaciones del usuario\n- API Key: solo la organización de la key",
+        "operationId": "list_user_organizations_api_v1_organizations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationRead"
+                  },
+                  "type": "array",
+                  "title": "Response List User Organizations Api V1 Organizations Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Create Organization",
+        "description": "Crea una nueva organización (workspace) y asigna al usuario actual como 'owner'.",
+        "operationId": "create_organization_api_v1_organizations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/organizations/active": {
+      "get": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Get Active Workspace",
+        "description": "Obtiene el espacio de trabajo / organización actualmente activo según el header X-Organization-ID.",
+        "operationId": "get_active_workspace_api_v1_organizations_active_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}": {
+      "get": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Get Organization",
+        "description": "Obtiene el detalle de la organización si el usuario es miembro.",
+        "operationId": "get_organization_api_v1_organizations__org_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Update Organization",
+        "description": "Actualiza los datos básicos de la organización (requiere rol owner o admin).",
+        "operationId": "update_organization_api_v1_organizations__org_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/members": {
+      "get": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "List Organization Members",
+        "description": "Lista todos los miembros de la organización con sus respectivos roles y perfiles.",
+        "operationId": "list_organization_members_api_v1_organizations__org_id__members_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationMemberRead"
+                  },
+                  "title": "Response List Organization Members Api V1 Organizations  Org Id  Members Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/members/{user_id}": {
+      "patch": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Update Member Role",
+        "description": "Actualiza el rol de un miembro ('admin' o 'member').",
+        "operationId": "update_member_role_api_v1_organizations__org_id__members__user_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationMemberUpdateRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationMemberRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Remove Member",
+        "description": "Elimina a un miembro de la organización respetando jerarquías.",
+        "operationId": "remove_member_api_v1_organizations__org_id__members__user_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/invitations": {
+      "post": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Create Invitation",
+        "description": "Genera una invitación por email con token temporal (7 días de validez).",
+        "operationId": "create_invitation_api_v1_organizations__org_id__invitations_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "List Invitations",
+        "description": "Lista todas las invitaciones pendientes de la organización.",
+        "operationId": "list_invitations_api_v1_organizations__org_id__invitations_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvitationRead"
+                  },
+                  "title": "Response List Invitations Api V1 Organizations  Org Id  Invitations Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/invitations/{invitation_id}": {
+      "delete": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Revoke Invitation",
+        "description": "Revoca una invitación pendiente.",
+        "operationId": "revoke_invitation_api_v1_organizations__org_id__invitations__invitation_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          },
+          {
+            "name": "invitation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Invitation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/invitations/{token}/accept": {
+      "post": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Accept Invitation",
+        "description": "Permite al usuario autenticado aceptar una invitación y sumarse a la organización.",
+        "operationId": "accept_invitation_api_v1_organizations_invitations__token__accept_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationAcceptResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/api-keys": {
+      "post": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Create Api Key",
+        "description": "Crea una nueva API Key para la organización con scopes restringidos.\nSolo accesible por personas (JWT) con rol 'owner' o 'admin'.\nEl secreto completo se devuelve una única vez y con header Cache-Control: no-store.",
+        "operationId": "create_api_key_api_v1_organizations__org_id__api_keys_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiKeyCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeyCreatedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "List Api Keys",
+        "description": "Lista todas las API keys activas y revocadas de la organización.\nOculta el secreto y muestra solo el prefijo seguro (ej: 'sk_test_abc1...').",
+        "operationId": "list_api_keys_api_v1_organizations__org_id__api_keys_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiKeyRead"
+                  },
+                  "title": "Response List Api Keys Api V1 Organizations  Org Id  Api Keys Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/api-keys/{key_id}": {
+      "get": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Get Api Key",
+        "description": "Obtiene los detalles de una API key específica de la organización (enmascarando el secreto).\nFiltra por organization_id y key_id para prevenir vulnerabilidades IDOR.",
+        "operationId": "get_api_key_api_v1_organizations__org_id__api_keys__key_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          },
+          {
+            "name": "key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Key Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeyRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Organizaciones"
+        ],
+        "summary": "Revoke Api Key",
+        "description": "Revoca inmediatamente una API key de la organización.\nCualquier petición subsiguiente con esta key retornará 401 Unauthorized.",
+        "operationId": "revoke_api_key_api_v1_organizations__org_id__api_keys__key_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          },
+          {
+            "name": "key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Key Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/usage": {
+      "get": {
+        "tags": [
+          "Uso y Cuotas"
+        ],
+        "summary": "Get Organization Usage",
+        "description": "Retorna el resumen consolidado de cuotas y uso de la organización en su período vigente.\nAccesible por miembros de la organización (JWT) o mediante API Key con scope 'members:read'.",
+        "operationId": "get_organization_usage_api_v1_organizations__org_id__usage_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Org Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageSummary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/chat/stream": {
+      "post": {
+        "tags": [
+          "Inteligencia Artificial"
+        ],
+        "summary": "Chat Stream",
+        "description": "Endpoint de chat con IA en streaming (SSE: text/event-stream).\n- Soporta autenticación dual: JWT (miembros de la org) y API Key (con scope 'ai:generate').\n- Valida cuota de uso mensual ('ai_messages') atómicamente antes de abrir la conexión (D-08).\n- Si la cuota está agotada, responde con HTTP 402 Payment Required y payload estructurado (D-04).\n- Emite eventos estándar: 'meta', 'delta', 'usage', 'done' y keepalives ': ping'.\n- Si el proveedor falla antes del primer token, reembolsa automáticamente el uso (D-08).\n- Registra auditoría inmutable de consumo sin persistir datos sensibles (D-03).",
+        "operationId": "chat_stream_api_v1_ai_chat_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatStreamRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/dev/emails": {
+      "get": {
+        "tags": [
+          "Herramientas de Desarrollo"
+        ],
+        "summary": "List Email Templates",
+        "description": "Galería interactiva para previsualizar todas las plantillas de correo en desarrollo.",
+        "operationId": "list_email_templates_dev_emails_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dev/emails/preview/{template_name}": {
+      "get": {
+        "tags": [
+          "Herramientas de Desarrollo"
+        ],
+        "summary": "Preview Email",
+        "description": "Renderiza una plantilla de correo específica con datos de prueba.",
+        "operationId": "preview_email_dev_emails_preview__template_name__get",
+        "parameters": [
+          {
+            "name": "template_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Template Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Salud"
+        ],
+        "summary": "Health Check",
+        "description": "Endpoint de verificación de estado (Health Check) para monitoreo y contenedores.\nVerifica activamente la conectividad con la base de datos ejecutando SELECT 1.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Inicio"
+        ],
+        "summary": "Root",
+        "description": "Endpoint raíz con información general y enlaces a la documentación interactiva.",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountDeletionResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "Tu cuenta y datos personales han sido anonimizados de acuerdo a GDPR."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "anonymized"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Deleted At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "deleted_at"
+        ],
+        "title": "AccountDeletionResponse",
+        "description": "Confirmación de supresión y anonimización de cuenta bajo GDPR (Derecho al Olvido)."
+      },
+      "ApiKeyCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "description": "Nombre o etiqueta descriptiva (ej: 'Zapier Integration')"
+          },
+          "scopes": {
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Scopes",
+            "description": "Lista de permisos asignados a la key"
+          },
+          "expires_in_days": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires In Days",
+            "description": "Días hasta expiración (opcional)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "scopes"
+        ],
+        "title": "ApiKeyCreate"
+      },
+      "ApiKeyCreatedResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "key_prefix": {
+            "type": "string",
+            "title": "Key Prefix"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes"
+          },
+          "created_by_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Id"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "raw_key": {
+            "type": "string",
+            "title": "Raw Key",
+            "description": "Secreto completo. Solo se muestra una vez al crearse."
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "Copia esta clave ahora. Por motivos de seguridad, no se volverá a mostrar."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "name",
+          "key_prefix",
+          "scopes",
+          "created_at",
+          "is_active",
+          "raw_key"
+        ],
+        "title": "ApiKeyCreatedResponse"
+      },
+      "ApiKeyRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "key_prefix": {
+            "type": "string",
+            "title": "Key Prefix"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes"
+          },
+          "created_by_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Id"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "name",
+          "key_prefix",
+          "scopes",
+          "created_at",
+          "is_active"
+        ],
+        "title": "ApiKeyRead"
+      },
+      "ChatMessage": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user",
+              "assistant"
+            ],
+            "title": "Role",
+            "description": "Rol del autor del mensaje ('system', 'user', o 'assistant')"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Contenido del mensaje"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "ChatMessage",
+        "description": "Mensaje individual en una conversación de chat."
+      },
+      "ChatStreamRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/ChatMessage"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Messages",
+            "description": "Historial de mensajes de la conversación. El último debe ser del rol 'user'."
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model",
+            "description": "Modelo de IA solicitado. Debe estar en la lista blanca permitida por el backend."
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 2.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature",
+            "description": "Parámetro de aleatoriedad en la respuesta (0.0 a 2.0).",
+            "default": 0.7
+          },
+          "max_output_tokens": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 4096.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Output Tokens",
+            "description": "Número máximo de tokens generados en la respuesta."
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "ChatStreamRequest",
+        "description": "Cuerpo de la solicitud para el endpoint POST /ai/chat/stream."
+      },
+      "CheckoutRequest": {
+        "properties": {
+          "payment_method_id": {
+            "type": "string",
+            "title": "Payment Method Id"
+          },
+          "price_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "payment_method_id"
+        ],
+        "title": "CheckoutRequest"
+      },
+      "CheckoutResponse": {
+        "properties": {
+          "subscription_id": {
+            "type": "string",
+            "title": "Subscription Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Secret"
+          },
+          "requires_confirmation": {
+            "type": "boolean",
+            "title": "Requires Confirmation"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "subscription_id",
+          "requires_confirmation",
+          "status"
+        ],
+        "title": "CheckoutResponse"
+      },
+      "CustomerPortalRequest": {
+        "properties": {
+          "return_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Return Url"
+          }
+        },
+        "type": "object",
+        "title": "CustomerPortalRequest"
+      },
+      "CustomerPortalResponse": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "CustomerPortalResponse"
+      },
+      "DevLoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "DevLoginRequest"
+      },
+      "DevLoginResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/DevUserRead"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "user"
+        ],
+        "title": "DevLoginResponse"
+      },
+      "DevUserOrg": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "role"
+        ],
+        "title": "DevUserOrg"
+      },
+      "DevUserRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "cognito_sub": {
+            "type": "string",
+            "title": "Cognito Sub"
+          },
+          "organizations": {
+            "items": {
+              "$ref": "#/components/schemas/DevUserOrg"
+            },
+            "type": "array",
+            "title": "Organizations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "first_name",
+          "last_name",
+          "cognito_sub",
+          "organizations"
+        ],
+        "title": "DevUserRead"
+      },
+      "ExportAiUsageEvent": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "input_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Tokens"
+          },
+          "output_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Tokens"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "organization_id",
+          "provider",
+          "model",
+          "status",
+          "created_at"
+        ],
+        "title": "ExportAiUsageEvent"
+      },
+      "ExportApiKey": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "key_prefix": {
+            "type": "string",
+            "title": "Key Prefix"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "name",
+          "key_prefix",
+          "scopes",
+          "created_at"
+        ],
+        "title": "ExportApiKey"
+      },
+      "ExportOrganizationMembership": {
+        "properties": {
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id"
+          },
+          "organization_name": {
+            "type": "string",
+            "title": "Organization Name"
+          },
+          "organization_slug": {
+            "type": "string",
+            "title": "Organization Slug"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Joined At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "organization_id",
+          "organization_name",
+          "organization_slug",
+          "role",
+          "joined_at"
+        ],
+        "title": "ExportOrganizationMembership"
+      },
+      "ExportStripeCustomer": {
+        "properties": {
+          "stripe_customer_id": {
+            "type": "string",
+            "title": "Stripe Customer Id"
+          },
+          "subscription_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subscription Status"
+          },
+          "stripe_subscription_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Subscription Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stripe_customer_id"
+        ],
+        "title": "ExportStripeCustomer"
+      },
+      "ExportUserProfile": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "cognito_sub": {
+            "type": "string",
+            "title": "Cognito Sub"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "cognito_sub",
+          "email",
+          "first_name",
+          "last_name",
+          "created_at"
+        ],
+        "title": "ExportUserProfile"
+      },
+      "ExportUserSettings": {
+        "properties": {
+          "subscription_status": {
+            "type": "string",
+            "title": "Subscription Status"
+          },
+          "subscription_start_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subscription Start Date"
+          },
+          "subscription_end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subscription End Date"
+          },
+          "notify_comments": {
+            "type": "boolean",
+            "title": "Notify Comments",
+            "default": false
+          },
+          "notify_updates": {
+            "type": "boolean",
+            "title": "Notify Updates",
+            "default": false
+          },
+          "notify_marketing": {
+            "type": "boolean",
+            "title": "Notify Marketing",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "subscription_status"
+        ],
+        "title": "ExportUserSettings"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InvitationAcceptResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "organization_id",
+          "role"
+        ],
+        "title": "InvitationAcceptResponse"
+      },
+      "InvitationCreate": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "Correo del nuevo miembro a invitar"
+          },
+          "role": {
+            "type": "string",
+            "pattern": "^(admin|member)$",
+            "title": "Role",
+            "description": "Rol que tendrá en la organización",
+            "default": "member"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "InvitationCreate"
+      },
+      "InvitationRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "email",
+          "role",
+          "token",
+          "status",
+          "expires_at",
+          "created_at"
+        ],
+        "title": "InvitationRead"
+      },
+      "OrganizationCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "Name",
+            "description": "Nombre de la organización"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 150,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug",
+            "description": "Identificador único legible en URL"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "OrganizationCreate"
+      },
+      "OrganizationMemberRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "user_id",
+          "role",
+          "email",
+          "first_name",
+          "last_name",
+          "created_at"
+        ],
+        "title": "OrganizationMemberRead"
+      },
+      "OrganizationMemberUpdateRole": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "pattern": "^(admin|member)$",
+            "title": "Role",
+            "description": "Nuevo rol para el miembro ('admin' o 'member')"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "title": "OrganizationMemberUpdateRole"
+      },
+      "OrganizationRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "owner_id": {
+            "type": "integer",
+            "title": "Owner Id"
+          },
+          "subscription_status": {
+            "type": "string",
+            "title": "Subscription Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "owner_id",
+          "subscription_status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "OrganizationRead"
+      },
+      "OrganizationUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 150,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 150,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          }
+        },
+        "type": "object",
+        "title": "OrganizationUpdate"
+      },
+      "Scope": {
+        "type": "string",
+        "enum": [
+          "users:read",
+          "users:write",
+          "members:read",
+          "members:write",
+          "billing:read",
+          "billing:write",
+          "ai:generate"
+        ],
+        "title": "Scope",
+        "description": "Permisos que puede tener una API Key. Formato ``recurso:acción``.\n\nNo existe un scope ``admin`` a propósito: una key no puede administrar\nkeys (crear, listar, modificar o revocar). Eso es solo para JWT, así una\nkey con permisos limitados no puede escalarse a sí misma."
+      },
+      "SubscriptionPlanRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "price": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Price"
+          },
+          "interval": {
+            "type": "string",
+            "title": "Interval"
+          },
+          "features": {
+            "items": {},
+            "type": "array",
+            "title": "Features"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "description",
+          "price",
+          "interval",
+          "features",
+          "is_active"
+        ],
+        "title": "SubscriptionPlanRead"
+      },
+      "SubscriptionStatusResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "is_trial": {
+            "type": "boolean",
+            "title": "Is Trial"
+          },
+          "current_period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Period End"
+          },
+          "stripe_customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Customer Id"
+          },
+          "stripe_subscription_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Subscription Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "is_active",
+          "is_trial"
+        ],
+        "title": "SubscriptionStatusResponse"
+      },
+      "UsageMetricStatus": {
+        "properties": {
+          "metric": {
+            "type": "string",
+            "title": "Metric",
+            "description": "Nombre de la métrica (ej: 'ai_messages', 'members')"
+          },
+          "used": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Used",
+            "description": "Cantidad utilizada en el período actual"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit",
+            "description": "Límite máximo permitido. None = ilimitado"
+          },
+          "remaining": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining",
+            "description": "Cantidad restante. None si es ilimitado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric",
+          "used"
+        ],
+        "title": "UsageMetricStatus",
+        "description": "Estado de consumo de una métrica individual."
+      },
+      "UsageSummary": {
+        "properties": {
+          "organization_id": {
+            "type": "integer",
+            "title": "Organization Id",
+            "description": "ID de la organización"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Period Start",
+            "description": "Inicio del período de facturación (UTC)"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Period End",
+            "description": "Fin del período de facturación (UTC)"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/UsageMetricStatus"
+            },
+            "type": "array",
+            "title": "Metrics",
+            "description": "Métricas evaluadas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "organization_id",
+          "period_start",
+          "period_end",
+          "metrics"
+        ],
+        "title": "UsageSummary",
+        "description": "Resumen consolidado de uso para la organización en su período de facturación."
+      },
+      "UserDataExport": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/ExportUserProfile"
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExportUserSettings"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "memberships": {
+            "items": {
+              "$ref": "#/components/schemas/ExportOrganizationMembership"
+            },
+            "type": "array",
+            "title": "Memberships"
+          },
+          "stripe_customer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExportStripeCustomer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_api_keys": {
+            "items": {
+              "$ref": "#/components/schemas/ExportApiKey"
+            },
+            "type": "array",
+            "title": "Created Api Keys"
+          },
+          "ai_usage_events": {
+            "items": {
+              "$ref": "#/components/schemas/ExportAiUsageEvent"
+            },
+            "type": "array",
+            "title": "Ai Usage Events"
+          },
+          "exported_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Exported At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "exported_at"
+        ],
+        "title": "UserDataExport",
+        "description": "Estructura completa de exportación de datos del usuario bajo GDPR (Derecho de Acceso y Portabilidad)."
+      },
+      "UserMeResponse": {
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/UserProfileRead"
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserSettingsRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "profile"
+        ],
+        "title": "UserMeResponse"
+      },
+      "UserProfileRead": {
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "default": ""
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "default": ""
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "cognito_sub": {
+            "type": "string",
+            "title": "Cognito Sub"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "cognito_sub",
+          "email",
+          "created_at"
+        ],
+        "title": "UserProfileRead"
+      },
+      "UserProfileUpdate": {
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "default": ""
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "UserProfileUpdate"
+      },
+      "UserSettingsRead": {
+        "properties": {
+          "notify_comments": {
+            "type": "boolean",
+            "title": "Notify Comments",
+            "default": false
+          },
+          "notify_updates": {
+            "type": "boolean",
+            "title": "Notify Updates",
+            "default": false
+          },
+          "notify_marketing": {
+            "type": "boolean",
+            "title": "Notify Marketing",
+            "default": false
+          },
+          "subscription_status": {
+            "type": "string",
+            "title": "Subscription Status"
+          },
+          "subscription_start_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subscription Start Date"
+          },
+          "subscription_end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subscription End Date"
+          },
+          "trial_end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trial End Date"
+          },
+          "is_subscription_active": {
+            "type": "boolean",
+            "title": "Is Subscription Active"
+          },
+          "is_trial_active": {
+            "type": "boolean",
+            "title": "Is Trial Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "subscription_status",
+          "is_subscription_active",
+          "is_trial_active"
+        ],
+        "title": "UserSettingsRead"
+      },
+      "UserSettingsUpdate": {
+        "properties": {
+          "notify_comments": {
+            "type": "boolean",
+            "title": "Notify Comments",
+            "default": false
+          },
+          "notify_updates": {
+            "type": "boolean",
+            "title": "Notify Updates",
+            "default": false
+          },
+          "notify_marketing": {
+            "type": "boolean",
+            "title": "Notify Marketing",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "UserSettingsUpdate"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "APIKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

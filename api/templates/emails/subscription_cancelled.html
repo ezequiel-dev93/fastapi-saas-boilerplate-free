@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Cancelación de Suscripción - {{ project_name }}{% endblock %}
+
+{% block content %}
+<h2>Tu suscripción ha sido cancelada</h2>
+<p>Hola{% if user_name %} <strong>{{ user_name }}</strong>{% endif %},</p>
+<p>Te confirmamos que la cancelación de tu suscripción en <strong>{{ project_name }}</strong> ha sido programada conforme a tu solicitud.</p>
+
+<div class="info-card">
+  <div class="info-row">
+    <span class="info-label">Estado de cancelación</span>
+    <span class="info-value"><span class="badge badge-amber">Fin de ciclo programado</span></span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Acceso garantizado hasta</span>
+    <span class="info-value">{{ period_end_date|default('Final del ciclo actual') }}</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Tus proyectos y datos</span>
+    <span class="info-value">Conservados de forma segura</span>
+  </div>
+</div>
+
+<p><strong>Política de Cancelación Honesta:</strong> No te cortamos el acceso de inmediato. Mantendrás todas las capacidades de tu plan hasta el último día del ciclo ya abonado.</p>
+
+<div class="button-container">
+  <a href="{{ dashboard_url|default('http://localhost:3000/dashboard') }}" class="email-button">Reactivar o Gestionar mi Cuenta</a>
+</div>
+
+<p style="font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 0;">
+  Lamentamos verte partir. Si en el futuro decides regresar, podrás reactivar tu suscripción con un solo clic manteniendo toda tu configuración previa.
+</p>
+{% endblock %}

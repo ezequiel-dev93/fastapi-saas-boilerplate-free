@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Suscripción Confirmada - {{ project_name }}{% endblock %}
+
+{% block content %}
+<h2>¡Gracias por suscribirte al Plan {{ plan_name }}! 🎉</h2>
+<p>Hola{% if user_name %} <strong>{{ user_name }}</strong>{% endif %},</p>
+<p>Tu pago ha sido procesado con éxito y tu suscripción a <strong>{{ project_name }}</strong> ya se encuentra activa.</p>
+
+<div class="info-card">
+  <div class="info-row">
+    <span class="info-label">Plan contratado</span>
+    <span class="info-value">{{ plan_name }}</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Estado de la suscripción</span>
+    <span class="info-value"><span class="badge badge-emerald">Activa</span></span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Acceso a soporte</span>
+    <span class="info-value">Prioritario</span>
+  </div>
+</div>
+
+<p>A partir de este instante cuentas con acceso ininterrumpido a todas las capacidades y límites extendidos de tu plan.</p>
+
+<div class="button-container">
+  <a href="{{ dashboard_url|default('http://localhost:3000/dashboard') }}" class="email-button">Acceder a la Plataforma</a>
+</div>
+
+<p style="font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 0;">
+  Puedes descargar tus facturas fiscales en PDF, actualizar tu método de pago o gestionar tu plan en cualquier momento desde el Customer Portal en los ajustes de tu cuenta.
+</p>
+{% endblock %}

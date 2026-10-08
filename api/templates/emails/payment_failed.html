@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Acción requerida: Error en el pago de tu suscripción{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 24px;">
+  <span style="display: inline-block; padding: 6px 14px; background-color: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; border-radius: 9999px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+    ⚠️ Pago no procesado
+  </span>
+</div>
+
+<h1 class="title" style="color: #991b1b; text-align: center;">No pudimos procesar tu pago</h1>
+
+<p class="greeting">
+  {% if user_name %}
+  Hola, <strong>{{ user_name }}</strong>.
+  {% else %}
+  Hola.
+  {% endif %}
+</p>
+
+<p class="paragraph">
+  Intentamos realizar el cobro correspondiente a tu suscripción en <strong>{{ project_name }}</strong>{% if amount_due %} por un monto de <strong>{{ amount_due }}</strong>{% endif %}, pero la entidad emisora de tu tarjeta rechazó la transacción.
+</p>
+
+<div class="callout" style="background-color: #fff7ed; border-left: 4px solid #f97316; padding: 16px; margin: 24px 0; border-radius: 4px;">
+  <p style="margin: 0; font-size: 14px; color: #9a3412; font-weight: 500;">
+    <strong>Tu acceso sigue temporalmente activo</strong>, pero para evitar la suspensión de las funciones premium de tu organización, por favor actualiza tus datos de pago cuanto antes.
+  </p>
+</div>
+
+<div class="btn-container" style="text-align: center; margin: 32px 0;">
+  <a href="{{ portal_url | default('#') }}" class="btn" style="background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px; display: inline-block;">
+    Actualizar método de pago en Stripe &rarr;
+  </a>
+</div>
+
+<p class="paragraph" style="font-size: 14px; color: #64748b;">
+  Si ya actualizaste tu tarjeta en las últimas horas, puedes desestimar este mensaje. Si tienes dudas o crees que se trata de un error de tu banco, responde a este correo y nuestro equipo de soporte te ayudará de inmediato.
+</p>
+{% endblock %}

@@ -1,0 +1,94 @@
+# FastAPI SaaS Boilerplate - Cursor Rules
+
+## Project Context
+This is a production-ready FastAPI SaaS boilerplate with:
+- **Dual Auth**: AWS Cognito JWT (RS256) + SHA-256 hashed API Keys
+- **Multi-tenancy**: Organizations/Workspaces with RBAC (owner, admin, member)
+- **Billing**: Stripe subscriptions with idempotent webhooks, Customer Portal
+- **Background Jobs**: ARQ + Redis with automatic sync fallback
+- **Architecture**: Screaming Modular Monolith (SOLID, Clean Architecture)
+
+## Code Style Rules
+
+### Python / FastAPI
+- Use **type hints everywhere** (Pydantic v2, SQLAlchemy 2.0)
+- **Async/await** for all I/O (database, HTTP, Redis)
+- **Thin controllers**: Routes only validate, call services, return responses
+- **Services = Use Cases**: Business logic in `services.py`, no HTTP concerns
+- **Gateways = External Adapters**: Stripe, SES, Cognito behind protocols
+- **Dependency Injection**: Use `Depends` for all cross-cutting concerns
+
+### Project Structure (Screaming Architecture)
+```
+api/modules/<domain>/
+├── models.py       # SQLAlchemy ORM models
+├── schemas.py      # Pydantic v2 DTOs (request/response)
+├── services.py     # Business logic / Use Cases
+├── routes.py       # Thin HTTP controllers
+├── dependencies.py # RBAC guards, feature gating (organizations only)
+└── gateway.py      # External API adapters (billing only)
+```
+
+### Database (SQLAlchemy 2.0 + Alembic)
+- Use `Mapped`, `mapped_column`, `relationship` with type annotations
+- **Never** write raw SQL - use ORM or `select()` constructs
+- Migrations via Alembic: `alembic revision --autogenerate -m "description"`
+- Local dev uses SQLite, production uses PostgreSQL
+
+### Authentication Patterns
+```python
+# Dual auth - works with both Cognito JWT and X-API-Key
+current_user: UserProfile = Depends(get_current_user)
+
+# Organization context (multi-tenancy)
+org: Organization = Depends(get_active_organization)  # Reads X-Organization-ID header
+
+# RBAC
+membership: OrganizationMember = Depends(require_org_role(["owner", "admin"]))
+
+# Feature gating (plan-based)
+membership: OrganizationMember = Depends(require_feature("advanced_analytics"))
+```
+
+### Error Handling
+- Use `HTTPException` with proper status codes
+- Log structured errors with `logger.error(..., extra={...})`
+- Never expose internal errors to clients
+
+### Testing
+- Tests in `tests/` mirror `api/modules/` structure
+- Use `TestClient` for integration tests
+- Mock external services (Stripe, SES, Cognito) via protocol fakes
+- Run with: `pytest -v` (44 tests, all green)
+
+## Cursor-Specific Commands
+
+### `/new-module` - Create a new business module
+Creates the full module structure following project conventions.
+
+### `/scope-to-tenant` - Add organization scoping to a query
+Automatically adds `organization_id` filter to repository/service methods.
+
+### `/add-plan-limit` - Add feature gating for a plan feature
+Creates the feature flag, updates plan, adds dependency guard.
+
+### `/debug-stripe-webhook` - Debug Stripe webhook locally
+Shows how to use Stripe CLI to forward webhooks to localhost.
+
+### `/generate-tests` - Generate test scaffolding for a module
+Creates test files with fixtures, mocks, and example test cases.
+
+## Forbidden Patterns
+- ❌ Direct `stripe.` or `boto3.` calls in routes/services
+- ❌ Raw SQL strings
+- ❌ Sync DB calls in async functions
+- ❌ Business logic in `routes.py`
+- ❌ Hardcoded secrets (use `config.py` / `.env`)
+- ❌ `print()` statements (use `logger`)
+
+## Required Patterns
+- ✅ Protocol-based DI for external services
+- ✅ Pydantic v2 for all schemas
+- ✅ Structured logging with `request_id`
+- ✅ Idempotency keys for Stripe operations
+- ✅ SHA-256 hashing for API keys (never store plaintext)

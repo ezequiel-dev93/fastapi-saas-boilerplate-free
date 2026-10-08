@@ -1,0 +1,32 @@
+COMMERCIAL SOFTWARE LICENSE AGREEMENT (EULA)
+
+Copyright (c) 2026 Ezequiel Suarez. All rights reserved.
+Product: FastAPI SaaS Boilerplate (Pro Edition)
+
+By purchasing, downloading, or using this boilerplate software and associated documentation files (the "Software"), you agree to be bound by the terms and conditions of this Commercial License Agreement.
+
+1. GRANT OF LICENSE
+Subject to the terms and conditions of this Agreement, the Author grants you a non-exclusive, non-transferable, perpetual, worldwide license to:
+- Use, inspect, modify, and integrate the Software into an unlimited number of your own applications, software-as-a-service (SaaS) products, client projects, or internal tools.
+- Deploy, distribute, host, and sell the resulting end-user applications or SaaS services that you build using this Software.
+
+2. RESTRICTIONS
+You are explicitly prohibited from:
+- Reselling, redistributing, sub-licensing, renting, leasing, donating, or transferring the Software (or any portion, file, or derivative work thereof) as a boilerplate, starter kit, code template, educational course asset, or UI/backend kit, whether for free or for commercial gain.
+- Making the Software, its source code, or any derivative works publicly available on any public code repository (such as public GitHub, GitLab, or Bitbucket repositories), web server, torrent, forum, or file-sharing service.
+- Removing, altering, or obscuring any copyright, trademark, or proprietary notices contained in the Software.
+
+3. INTELLECTUAL PROPERTY
+The Software, including its architecture, code structure, documentation, and design patterns, remains the exclusive intellectual property of Ezequiel Suarez. You acquire only the limited license rights expressly granted in Section 1.
+
+4. SUPPORT AND UPDATES
+The Software is provided with lifetime access to future updates of this specific Boilerplate version. However, the purchase does not include personalized consulting, guaranteed technical support, or custom development services. The Author may provide bug fixes and updates at their sole discretion.
+
+5. REFUND POLICY
+Due to the non-returnable nature of digital source code, all sales are final. Once the Software is downloaded or accessed, no refunds will be issued. By purchasing, you acknowledge and agree to this no-refund policy.
+
+6. TERMINATION
+This Agreement is effective until terminated. The Author may terminate this license immediately and without notice if you fail to comply with any term or condition of this Agreement (e.g., distributing the code publicly). Upon termination, you must cease all use of the Software and destroy all copies of the source code in your possession.
+
+7. DISCLAIMER OF WARRANTIES
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  api:
+    build: .
+    container_name: saas_fastapi
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=postgresql+psycopg://saas_user:saas_password@db:5432/saas_db
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:4321,http://localhost:8000
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1025
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - mailpit
+      - redis
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+
+  db:
+    image: postgres:16-alpine
+    container_name: saas_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=saas_user
+      - POSTGRES_PASSWORD=saas_password
+      - POSTGRES_DB=saas_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: saas_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  redis:
+    image: redis:7-alpine
+    container_name: saas_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

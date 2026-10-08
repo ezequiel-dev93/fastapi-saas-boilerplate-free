@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>{% block title %}{{ project_name }}{% endblock %}</title>
+  <style>
+    /* Reset básico para clientes de correo */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+
+    table {
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+
+    td {
+      padding: 0;
+    }
+
+    img {
+      border: 0;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+    }
+
+    .wrapper {
+      width: 100%;
+      background-color: #f8fafc;
+      padding: 48px 16px;
+    }
+
+    .card {
+      max-width: 560px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+      overflow: hidden;
+    }
+
+    .header-bar {
+      height: 6px;
+      background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%);
+    }
+
+    .brand-section {
+      padding: 32px 36px 16px 36px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      background: #0f172a;
+      border-radius: 10px;
+      text-align: center;
+      line-height: 36px;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .content-section {
+      padding: 16px 36px 36px 36px;
+    }
+
+    h1, h2 {
+      margin-top: 0;
+      color: #0f172a;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+
+    p {
+      margin: 0 0 16px 0;
+      color: #475569;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .info-card {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .info-label {
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: #0f172a;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-indigo {
+      background-color: #e0e7ff;
+      color: #4338ca;
+    }
+
+    .badge-emerald {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-amber {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .button-container {
+      margin: 32px 0 24px 0;
+      text-align: center;
+    }
+
+    .email-button {
+      display: inline-block;
+      background: #0f172a;
+      color: #ffffff !important;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.15);
+      transition: background 0.2s;
+    }
+
+    .email-button:hover {
+      background: #1e293b;
+    }
+
+    .footer-section {
+      padding: 24px 36px 36px 36px;
+      background-color: #fafafa;
+      border-top: 1px solid #f1f5f9;
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .footer-section p {
+      margin: 0 0 6px 0;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .footer-links {
+      margin-top: 12px;
+    }
+
+    .footer-links a {
+      color: #64748b;
+      text-decoration: underline;
+      margin: 0 8px;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        border-radius: 12px;
+      }
+      .brand-section, .content-section, .footer-section {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+      }
+      .email-button {
+        display: block;
+        padding: 14px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="header-bar"></div>
+      
+      <div class="brand-section">
+        <div class="brand-logo">⚡</div>
+        <div class="brand-name">{{ project_name }}</div>
+      </div>
+
+      <div class="content-section">
+        {% block content %}{% endblock %}
+      </div>
+
+      <div class="footer-section">
+        <p>Has recibido este correo electrónico transaccional de <strong>{{ project_name }}</strong>.</p>
+        <p>© 2026 {{ project_name }}. Todos los derechos reservados.</p>
+        <div class="footer-links">
+          <a href="#">Centro de Ayuda</a> •
+          <a href="#">Términos del Servicio</a> •
+          <a href="#">Privacidad</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

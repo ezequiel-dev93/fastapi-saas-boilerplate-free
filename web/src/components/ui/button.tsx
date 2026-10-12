@@ -13,12 +13,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none";
 
     const variants = {
-      default: "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm focus-visible:ring-indigo-500",
-      destructive: "bg-rose-600 text-white hover:bg-rose-700 shadow-sm focus-visible:ring-rose-500",
-      outline: "border border-neutral-300 dark:border-neutral-700 bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100",
-      secondary: "bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-700",
-      ghost: "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300",
-      link: "text-indigo-600 dark:text-indigo-400 underline-offset-4 hover:underline p-0 h-auto",
+      default: "bg-primary text-primary-foreground hover:opacity-90 shadow-sm font-semibold focus-visible:ring-ring",
+      destructive: "bg-destructive text-destructive-foreground hover:opacity-90 shadow-sm font-semibold focus-visible:ring-destructive",
+      outline: "border border-border bg-card/60 hover:bg-muted text-foreground",
+      secondary: "bg-muted text-foreground hover:opacity-80",
+      ghost: "hover:bg-muted text-foreground",
+      link: "text-primary underline-offset-4 hover:underline p-0 h-auto",
     };
 
     const sizes = {

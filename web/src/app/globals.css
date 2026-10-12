@@ -3,18 +3,82 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #fafafa;
-  --foreground: #09090b;
+  /* White Mode */
+  --background: #F4F6EC;         /* Off White */
+  --foreground: #171A16;         /* Charcoal */
+  --card: #FFFFFF;
+  --card-foreground: #171A16;
+  --popover: #FFFFFF;
+  --popover-foreground: #171A16;
+  --border: #D8DFCA;             /* Soft Smoke Gray border */
+  --input: #E2E8D5;
+  --muted: #E8ECE0;
+  --muted-foreground: #5A5A5A;   /* Concrete Gray */
+  --primary: #171A16;            /* Charcoal */
+  --primary-foreground: #9EFF00; /* Neon Lime */
+  --accent: #9EFF00;             /* Neon Lime */
+  --accent-foreground: #171A16;
+  --accent-secondary: #C6FF00;   /* Acid Green */
+  --destructive: #FF6A00;        /* Hot Orange */
+  --destructive-foreground: #FFFFFF;
+  --ring: #9EFF00;
 }
 
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
+  /* Dark Mode */
+  --background: #111111;         /* Postes Black */
+  --foreground: #FFFFFF;         /* Flash White */
+  --card: #181818;
+  --card-foreground: #FFFFFF;
+  --popover: #181818;
+  --popover-foreground: #FFFFFF;
+  --border: #2B2B2B;
+  --input: #262626;
+  --muted: #242424;
+  --muted-foreground: #8E8E8E;
+  --primary: #D7FF00;            /* Acid Yellow */
+  --primary-foreground: #111111; /* Postes Black */
+  --accent: #D7FF00;             /* Acid Yellow */
+  --accent-foreground: #111111;
+  --accent-secondary: #FF6A00;   /* Hot Orange */
+  --destructive: #FF6A00;        /* Hot Orange */
+  --destructive-foreground: #FFFFFF;
+  --ring: #D7FF00;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+
+  /* Brand Design Tokens */
+  --color-postes-black: #111111;
+  --color-acid-yellow: #D7FF00;
+  --color-hot-orange: #FF6A00;
+  --color-flash-white: #FFFFFF;
+  --color-concrete-gray: #5A5A5A;
+
+  --color-off-white: #F4F6EC;
+  --color-smoke-gray: #A6AF68;
+  --color-charcoal: #171A16;
+  --color-neon-lime: #9EFF00;
+  --color-acid-green: #C6FF00;
+
   --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-jetbrains-mono), monospace;
 }

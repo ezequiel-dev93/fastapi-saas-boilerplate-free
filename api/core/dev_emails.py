@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse
 
 from api.core.config import settings
 from api.core.email import render_email_template
+from api.core.theme import DARK_PALETTE, LIGHT_PALETTE
 
 router = APIRouter(prefix="/dev/emails", tags=["Herramientas de Desarrollo"])
 
@@ -51,35 +52,40 @@ TEMPLATE_METADATA = [
         "title": "Bienvenida a Período de Prueba (14 Días)",
         "trigger": "Al registrarse o activar el trial desde /api/v1/users/trial",
         "badge": "Onboarding",
-        "color": "#10b981",
+        "color": DARK_PALETTE["acid_yellow"],
+        "bg": "#1e2205",
     },
     {
         "id": "organization_invitation",
         "title": "Invitación a Espacio de Trabajo / Organización",
         "trigger": "Al invitar a un colaborador en /api/v1/organizations/{id}/invitations",
         "badge": "B2B Multi-tenancy",
-        "color": "#6366f1",
+        "color": LIGHT_PALETTE["smoke_gray"],
+        "bg": "#1c2014",
     },
     {
         "id": "subscription_confirmed",
         "title": "Confirmación de Suscripción / Pago Exitoso",
         "trigger": "Al completar checkout en Stripe o recibir webhook de pago exitoso",
         "badge": "Facturación",
-        "color": "#3b82f6",
+        "color": LIGHT_PALETTE["neon_lime"],
+        "bg": "#162405",
     },
     {
         "id": "subscription_cancelled",
         "title": "Cancelación de Suscripción (Honest Churn)",
         "trigger": "Al cancelar suscripción al final del ciclo facturado",
         "badge": "Facturación",
-        "color": "#f59e0b",
+        "color": DARK_PALETTE["hot_orange"],
+        "bg": "#2b1404",
     },
     {
         "id": "payment_failed",
         "title": "Recuperación de Pago Fallido (Dunning / Stripe)",
         "trigger": "Al recibir webhook invoice.payment_failed cuando la tarjeta rechaza el cobro",
         "badge": "Dunning / Retención",
-        "color": "#ef4444",
+        "color": DARK_PALETTE["hot_orange"],
+        "bg": "#2b1404",
     },
 ]
 
@@ -90,19 +96,19 @@ async def list_email_templates():
     cards_html = ""
     for tmpl in TEMPLATE_METADATA:
         cards_html += f"""
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="background: #181818; border: 1px solid #2e2e2e; border-radius: 14px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: space-between;">
             <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <span style="background: {tmpl["color"]}15; color: {tmpl["color"]}; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <span style="background: {tmpl["bg"]}; color: {tmpl["color"]}; border: 1px solid {tmpl["color"]}40; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">
                         {tmpl["badge"]}
                     </span>
-                    <span style="color: #94a3b8; font-size: 13px; font-mono;">{tmpl["id"]}.html</span>
+                    <span style="color: {DARK_PALETTE["concrete_gray"]}; font-size: 13px; font-family: monospace;">{tmpl["id"]}.html</span>
                 </div>
-                <h3 style="margin: 0 0 8px 0; color: #0f172a; font-size: 18px; font-weight: 600;">{tmpl["title"]}</h3>
-                <p style="margin: 0 0 20px 0; color: #64748b; font-size: 14px; line-height: 1.5;"><strong>Disparador:</strong> {tmpl["trigger"]}</p>
+                <h3 style="margin: 0 0 8px 0; color: #FFFFFF; font-size: 18px; font-weight: 700;">{tmpl["title"]}</h3>
+                <p style="margin: 0 0 20px 0; color: #a0a0a0; font-size: 14px; line-height: 1.5;"><strong>Disparador:</strong> {tmpl["trigger"]}</p>
             </div>
             <div style="display: flex; gap: 10px;">
-                <a href="/dev/emails/preview/{tmpl["id"]}" target="_blank" style="flex: 1; text-align: center; background: #0f172a; color: #ffffff; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+                <a href="/dev/emails/preview/{tmpl["id"]}" target="_blank" style="flex: 1; text-align: center; background: {DARK_PALETTE["acid_yellow"]}; color: {DARK_PALETTE["postes_black"]}; text-decoration: none; padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 700; transition: opacity 0.2s;">
                     Abrir en Pantalla Completa ↗
                 </a>
             </div>
@@ -119,10 +125,10 @@ async def list_email_templates():
         <style>
             body {{
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                background-color: #f8fafc;
+                background-color: {DARK_PALETTE["postes_black"]};
                 margin: 0;
                 padding: 40px 20px;
-                color: #0f172a;
+                color: #FFFFFF;
             }}
             .container {{
                 max-width: 1000px;
@@ -133,12 +139,13 @@ async def list_email_templates():
                 text-align: center;
             }}
             .header h1 {{
-                font-size: 30px;
+                font-size: 32px;
                 margin: 0 0 10px 0;
                 letter-spacing: -0.02em;
+                color: {DARK_PALETTE["flash_white"]};
             }}
             .header p {{
-                color: #64748b;
+                color: {DARK_PALETTE["concrete_gray"]};
                 font-size: 16px;
                 margin: 0;
             }}
@@ -148,23 +155,26 @@ async def list_email_templates():
                 gap: 24px;
             }}
             .badge-env {{
-                background: #e0e7ff;
-                color: #4338ca;
-                padding: 4px 12px;
+                background: #1f2405;
+                color: {DARK_PALETTE["acid_yellow"]};
+                border: 1px solid {DARK_PALETTE["acid_yellow"]}40;
+                padding: 5px 14px;
                 border-radius: 9999px;
-                font-size: 13px;
-                font-weight: 600;
+                font-size: 12px;
+                font-weight: 700;
                 display: inline-block;
-                margin-bottom: 12px;
+                margin-bottom: 14px;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
             }}
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
-                <span class="badge-env">Entorno de Desarrollo (DEBUG=True)</span>
-                <h1>🎨 Galería de Emails Transaccionales</h1>
-                <p>Previsualiza en tiempo real las plantillas Jinja2 renderizadas con datos de prueba realistas.</p>
+                <span class="badge-env">⚡ Entorno de Desarrollo (DEBUG=True)</span>
+                <h1>Galería de Emails Transaccionales</h1>
+                <p>Previsualiza en tiempo real las plantillas Jinja2 con la paleta oficial del sistema de diseño.</p>
             </div>
             <div class="grid">
                 {cards_html}

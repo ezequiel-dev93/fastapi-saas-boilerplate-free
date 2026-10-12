@@ -15,24 +15,26 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   return (
-    <aside className="w-64 border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 flex flex-col justify-between h-screen shrink-0 sticky top-0">
+    <aside className="w-64 border-r border-border bg-card flex flex-col justify-between h-screen shrink-0 sticky top-0">
       <div>
-        <div className="h-16 flex items-center px-6 border-b border-neutral-200/80 dark:border-neutral-800/80">
+        {/* Brand / Logo */}
+        <div className="h-16 flex items-center px-6 border-b border-border">
           <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white shadow-sm shadow-indigo-500/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <span className="text-sm font-bold tracking-tight text-neutral-900 dark:text-neutral-100 block leading-tight">
+              <span className="text-sm font-bold tracking-tight text-foreground block leading-tight">
                 FastAPI SaaS
               </span>
-              <span className="text-[10px] font-medium text-neutral-400 block uppercase tracking-wider">
+              <span className="text-[10px] font-medium text-muted-foreground block uppercase tracking-wider">
                 Lite Edition
               </span>
             </div>
           </Link>
         </div>
 
+        {/* Navigation list */}
         <nav className="p-3 space-y-1">
           {FEATURE_REGISTRY.map((feature) => {
             const Icon = feature.icon;
@@ -45,17 +47,19 @@ export function AppSidebar() {
               <Link
                 key={feature.id}
                 href={feature.href}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group ${isActive
-                    ? "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-semibold shadow-2xs"
-                    : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-neutral-100"
-                  }`}
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group ${
+                  isActive
+                    ? "bg-accent/15 text-primary dark:text-accent font-semibold shadow-2xs border-l-2 border-primary dark:border-accent"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon
-                    className={`h-4 w-4 transition-colors ${isActive
-                        ? "text-indigo-600 dark:text-indigo-400"
-                        : "text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300"
-                      }`}
+                    className={`h-4 w-4 transition-colors ${
+                      isActive
+                        ? "text-primary dark:text-accent"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    }`}
                   />
                   <span>{label}</span>
                 </div>
@@ -73,18 +77,17 @@ export function AppSidebar() {
         </nav>
       </div>
 
-      <div className="p-3 border-t border-neutral-200 dark:border-neutral-800 space-y-2">
-
-        <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-900/50">
+      <div className="p-3 border-t border-border space-y-2">
+        <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-muted/40">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="h-8 w-8 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-xs shrink-0">
+            <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-xs shrink-0">
               {user?.email?.charAt(0).toUpperCase() || "U"}
             </div>
             <div className="min-w-0 truncate">
-              <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-100 truncate">
+              <p className="text-xs font-semibold text-foreground truncate">
                 {user?.first_name || user?.email?.split("@")[0] || "User"}
               </p>
-              <p className="text-[10px] text-neutral-400 truncate">
+              <p className="text-[10px] text-muted-foreground truncate">
                 {user?.email || ""}
               </p>
             </div>
@@ -94,7 +97,7 @@ export function AppSidebar() {
             size="icon"
             onClick={logout}
             title={t.nav.signOut}
-            className="h-7 w-7 text-neutral-400 hover:text-rose-600"
+            className="h-7 w-7 text-muted-foreground hover:text-destructive"
           >
             <LogOut className="h-3.5 w-3.5" />
           </Button>

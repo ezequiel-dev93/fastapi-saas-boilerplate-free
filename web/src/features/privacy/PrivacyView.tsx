@@ -71,7 +71,7 @@ export function PrivacyView() {
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
           <div className="space-y-1">
             <CardTitle className="text-base flex items-center gap-2">
-              <Download className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              <Download className="h-4 w-4 text-primary dark:text-accent" />
               <span>{t.profile.exportTitle}</span>
             </CardTitle>
             <CardDescription className="text-xs">
@@ -90,14 +90,14 @@ export function PrivacyView() {
         </CardHeader>
       </Card>
 
-      <Card className="border-rose-200 dark:border-rose-900/60 bg-rose-50/20 dark:bg-rose-950/20">
+      <Card className="border-destructive/30 bg-destructive/5">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
           <div className="space-y-1">
-            <CardTitle className="text-base text-rose-800 dark:text-rose-200 flex items-center gap-2">
+            <CardTitle className="text-base text-destructive flex items-center gap-2">
               <Trash2 className="h-4 w-4" />
               <span>{t.profile.deleteTitle}</span>
             </CardTitle>
-            <CardDescription className="text-xs text-rose-600/80 dark:text-rose-400/80">
+            <CardDescription className="text-xs text-muted-foreground">
               {t.profile.deleteWarning}
             </CardDescription>
           </div>
@@ -119,7 +119,7 @@ export function PrivacyView() {
         description={t.profile.deleteConfirmDesc}
       >
         <div className="space-y-4 pt-2">
-          <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-xs text-rose-800 dark:text-rose-200 flex items-start gap-2.5">
+          <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-xs text-destructive flex items-start gap-2.5">
             <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
             <span>
               {t.profile.deleteWarning}

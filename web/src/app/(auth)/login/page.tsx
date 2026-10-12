@@ -60,7 +60,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-neutral-50 dark:bg-neutral-950 relative">
+    <section className="min-h-screen flex flex-col items-center justify-center p-4 bg-background text-foreground relative">
       {/* Top Bar Toggles */}
       <div className="absolute top-6 right-6 flex items-center gap-2">
         <LanguageToggle />
@@ -70,18 +70,18 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Logo and Brand Title */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white shadow-md shadow-indigo-500/20 mb-2">
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md shadow-primary/20 mb-2">
             <Sparkles className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             FastAPI SaaS Boilerplate
           </h1>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          <p className="text-xs text-muted-foreground">
             Sign in to access your organization dashboard
           </p>
         </div>
 
-        <Card className="border-neutral-200/80 dark:border-neutral-800 shadow-lg">
+        <Card className="shadow-lg">
           <CardHeader className="pb-4">
             <CardTitle className="text-base">Authentication</CardTitle>
             <CardDescription className="text-xs">
@@ -105,7 +105,7 @@ export default function LoginPage() {
               <div className="space-y-4">
                 {devUsers.length > 0 && (
                   <div className="space-y-2">
-                    <Label className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                    <Label className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
                       Select Dev Seed User
                     </Label>
                     <div className="space-y-1.5">
@@ -114,23 +114,23 @@ export default function LoginPage() {
                           key={u.id}
                           disabled={isSubmitting}
                           onClick={() => handleDevLogin(u.email)}
-                          className="w-full flex items-center justify-between p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/80 transition-colors text-left cursor-pointer group"
+                          className="w-full flex items-center justify-between p-2.5 rounded-lg border border-border hover:bg-muted transition-colors text-left cursor-pointer group"
                         >
                           <div className="min-w-0">
-                            <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 truncate">
+                            <p className="text-xs font-semibold text-foreground group-hover:text-primary dark:group-hover:text-accent truncate">
                               {u.first_name} {u.last_name}
                             </p>
-                            <p className="text-[11px] text-neutral-400 truncate">
+                            <p className="text-[11px] text-muted-foreground truncate">
                               {u.email}
                             </p>
                           </div>
                           <div className="flex items-center gap-1.5">
                             {u.organizations?.[0] && (
-                              <span className="text-[10px] bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-full text-neutral-600 dark:text-neutral-400 font-medium">
+                              <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground font-medium">
                                 {u.organizations[0].role}
                               </span>
                             )}
-                            <UserCheck className="h-4 w-4 text-neutral-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+                            <UserCheck className="h-4 w-4 text-muted-foreground group-hover:text-primary dark:group-hover:text-accent" />
                           </div>
                         </button>
                       ))}
@@ -182,6 +182,6 @@ export default function LoginPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </section>
   );
 }

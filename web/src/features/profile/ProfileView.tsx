@@ -53,8 +53,7 @@ export function ProfileView() {
   });
 
   return (
-    <div className="space-y-8 max-w-3xl">
-      {/* Header */}
+    <section className="space-y-8 max-w-3xl">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
           {t.profile.title}
@@ -64,12 +63,11 @@ export function ProfileView() {
         </p>
       </div>
 
-      {/* Profile Form Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Personal Information</CardTitle>
+          <CardTitle className="text-base">{t.profile.personalInfo}</CardTitle>
           <CardDescription className="text-xs">
-            Your name and contact details synchronized with your account.
+            {t.profile.personalInfoDesc}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -91,7 +89,7 @@ export function ProfileView() {
                 className="bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed text-neutral-400"
               />
               <p className="text-[11px] text-neutral-400">
-                Email address is managed by your identity provider (Cognito).
+                {t.profile.emailManagedNote}
               </p>
             </div>
 
@@ -104,7 +102,7 @@ export function ProfileView() {
                   id="firstName"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First name"
+                  placeholder={t.profile.firstName}
                 />
               </div>
 
@@ -116,7 +114,7 @@ export function ProfileView() {
                   id="lastName"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last name"
+                  placeholder={t.profile.lastName}
                 />
               </div>
             </div>
@@ -129,6 +127,6 @@ export function ProfileView() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }

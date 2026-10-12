@@ -20,7 +20,7 @@ const GITHUB_FREE_URL = "https://github.com/ezequiel-dev93/fastapi-saas-boilerpl
 
 export default function FreeHomePage() {
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-indigo-500 selection:text-white">
+    <main className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-indigo-500 selection:text-white">
       {/* Top Banner with Pro Upsell */}
       <div className="bg-gradient-to-r from-indigo-900/60 via-purple-900/60 to-indigo-900/60 border-b border-indigo-500/30 py-2.5 px-6 text-center text-xs">
         <span className="text-indigo-200">
@@ -71,8 +71,7 @@ export default function FreeHomePage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <main className="max-w-5xl mx-auto px-6 py-20 text-center space-y-8">
+      <section className="max-w-5xl mx-auto px-6 py-20 text-center space-y-8">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-mono font-medium">
           <Zap className="h-3.5 w-3.5 text-indigo-400" />
           <span>Production-Ready Python + Next.js Starter</span>
@@ -99,9 +98,8 @@ export default function FreeHomePage() {
             </Button>
           </Link>
         </div>
-      </main>
+      </section>
 
-      {/* What's Implemented Section */}
       <section className="py-20 border-t border-neutral-900 bg-neutral-900/40">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -160,7 +158,6 @@ export default function FreeHomePage() {
         </div>
       </section>
 
-      {/* Comparison: Free vs PRO */}
       <section className="py-20 border-t border-neutral-900 max-w-4xl mx-auto px-6">
         <div className="p-8 rounded-2xl bg-gradient-to-b from-neutral-900 to-neutral-950 border border-indigo-500/30 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -214,10 +211,9 @@ export default function FreeHomePage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-neutral-900 py-8 px-6 text-center text-xs font-mono text-neutral-500">
         <p>FastAPI SaaS Boilerplate (Lite Edition) • Open Source under MIT License</p>
       </footer>
-    </div>
+    </main>
   );
 }

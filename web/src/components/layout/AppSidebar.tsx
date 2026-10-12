@@ -17,7 +17,6 @@ export function AppSidebar() {
   return (
     <aside className="w-64 border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 flex flex-col justify-between h-screen shrink-0 sticky top-0">
       <div>
-        {/* Brand / Logo */}
         <div className="h-16 flex items-center px-6 border-b border-neutral-200/80 dark:border-neutral-800/80">
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white shadow-sm shadow-indigo-500/20">
@@ -34,7 +33,6 @@ export function AppSidebar() {
           </Link>
         </div>
 
-        {/* Navigation list */}
         <nav className="p-3 space-y-1">
           {FEATURE_REGISTRY.map((feature) => {
             const Icon = feature.icon;
@@ -47,19 +45,17 @@ export function AppSidebar() {
               <Link
                 key={feature.id}
                 href={feature.href}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group ${
-                  isActive
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group ${isActive
                     ? "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-semibold shadow-2xs"
                     : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-neutral-100"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon
-                    className={`h-4 w-4 transition-colors ${
-                      isActive
+                    className={`h-4 w-4 transition-colors ${isActive
                         ? "text-indigo-600 dark:text-indigo-400"
                         : "text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300"
-                    }`}
+                      }`}
                   />
                   <span>{label}</span>
                 </div>
@@ -77,7 +73,6 @@ export function AppSidebar() {
         </nav>
       </div>
 
-      {/* Bottom section: User Profile & Logout */}
       <div className="p-3 border-t border-neutral-200 dark:border-neutral-800 space-y-2">
 
         <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-900/50">

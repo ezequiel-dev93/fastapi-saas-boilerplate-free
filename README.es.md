@@ -37,7 +37,6 @@ Esta es la **versión Lite / Open Source** del Boilerplate para SaaS en FastAPI.
 
 ### 1. Configuración del Backend
 ```bash
-cd api
 python -m venv .venv
 source .venv/bin/activate  # En Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -48,6 +47,9 @@ cp .env.example .env
 
 # Ejecutar migraciones
 alembic upgrade head
+
+# Sembrar datos de desarrollo
+python seed.py
 
 # Iniciar servidor
 make run

@@ -1,67 +1,72 @@
+from __future__ import annotations
+
 from datetime import datetime, timezone
+from typing import Optional
 
 from sqlalchemy import (
     Boolean,
-    Column,
     DateTime,
     ForeignKey,
     Integer,
     String,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from api.core.database import Base
 
 
-def utcnow():
+def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
 class UserProfile(Base):
+    """Modelo ORM para perfiles de usuario (SQLAlchemy 2.0)."""
     __tablename__ = "user_profiles"
 
-    id = Column(Integer, primary_key=True, index=True)
-    cognito_sub = Column(String(255), unique=True, index=True, nullable=False)
-    email = Column(String(255), unique=True, index=True, nullable=False)
-    first_name = Column(String(150), default="", nullable=False)
-    last_name = Column(String(150), default="", nullable=False)
-    deleted_at = Column(DateTime(timezone=True), nullable=True, index=True)
-    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
-    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    cognito_sub: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    first_name: Mapped[str] = mapped_column(String(150), default="", nullable=False)
+    last_name: Mapped[str] = mapped_column(String(150), default="", nullable=False)
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
 
     # Relationships
-    settings = relationship("UserSettings", back_populates="user", uselist=False, cascade="all, delete-orphan")
-    stripe_customer = relationship("StripeCustomer", back_populates="user", uselist=False, cascade="all, delete-orphan")
-    memberships = relationship("OrganizationMember", back_populates="user", cascade="all, delete-orphan")
+    settings: Mapped[Optional[UserSettings]] = relationship(
+        "UserSettings", back_populates="user", uselist=False, cascade="all, delete-orphan"
+    )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<UserProfile(id={self.id}, email='{self.email}', sub='{self.cognito_sub}')>"
 
 
 class UserSettings(Base):
+    """Modelo ORM para configuraciones y preferencias de usuario (SQLAlchemy 2.0)."""
     __tablename__ = "user_settings"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user_profiles.id", ondelete="CASCADE"), unique=True, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("user_profiles.id", ondelete="CASCADE"), unique=True, nullable=False
+    )
 
     # Notification preferences
-    notify_comments = Column(Boolean, default=False, nullable=False)
-    notify_updates = Column(Boolean, default=False, nullable=False)
-    notify_marketing = Column(Boolean, default=False, nullable=False)
+    notify_comments: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    notify_updates: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    notify_marketing: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     # Subscription settings
-    subscription_plan_id = Column(Integer, ForeignKey("subscription_plans.id", ondelete="SET NULL"), nullable=True)
-    subscription_status = Column(String(20), default="inactive", nullable=False)  # active, inactive, cancelled, trial
-    subscription_start_date = Column(DateTime(timezone=True), nullable=True)
-    subscription_end_date = Column(DateTime(timezone=True), nullable=True)
-    trial_end_date = Column(DateTime(timezone=True), nullable=True)
+    subscription_plan_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    subscription_status: Mapped[str] = mapped_column(String(20), default="inactive", nullable=False)  # active, inactive, cancelled, trial
+    subscription_start_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    subscription_end_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    trial_end_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
-    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
 
     # Relationships
-    user = relationship("UserProfile", back_populates="settings")
-    subscription_plan = relationship("SubscriptionPlan", back_populates="subscribers")
+    user: Mapped[UserProfile] = relationship("UserProfile", back_populates="settings")
 
     @property
     def is_subscription_active(self) -> bool:
@@ -89,5 +94,5 @@ class UserSettings(Base):
                 return False
         return True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<UserSettings(user_id={self.user_id}, status='{self.subscription_status}')>"

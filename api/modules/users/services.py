@@ -1,14 +1,32 @@
+from __future__ import annotations
+
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from api.core.exceptions import (
+    ActiveTrialExistsError,
+    TrialAlreadyUsedError,
+    UserValidationError,
+)
 from api.modules.users.models import UserProfile, UserSettings
+from api.modules.users.repository import (
+    SqlAlchemyUserRepository,
+    UserRepositoryProtocol,
+)
 
 
 class UserService:
-    """Casos de uso y reglas de negocio para usuarios, perfiles y llaves de API."""
+    """Casos de uso y reglas de negocio para usuarios y perfiles (Clean Architecture)."""
+
+    def __init__(self, repository: Optional[UserRepositoryProtocol] = None):
+        self._repository = repository
+
+    def _get_repo(self, db: Session) -> UserRepositoryProtocol:
+        if self._repository is not None:
+            return self._repository
+        return SqlAlchemyUserRepository(db)
 
     def update_profile(
         self,
@@ -17,21 +35,15 @@ class UserService:
         first_name: str,
         last_name: str,
     ) -> UserProfile:
-        """Actualiza nombres y apellidos del perfil de usuario con validación."""
+        """Actualiza nombres y apellidos del perfil de usuario aplicando reglas de dominio."""
         clean_first = first_name.strip()
         clean_last = last_name.strip()
 
         if len(clean_first) > 150 or len(clean_last) > 150:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Los nombres deben contener 150 caracteres o menos.",
-            )
+            raise UserValidationError("Los nombres deben contener 150 caracteres o menos.")
 
-        user.first_name = clean_first
-        user.last_name = clean_last
-        db.commit()
-        db.refresh(user)
-        return user
+        repo = self._get_repo(db)
+        return repo.update_profile(user, first_name=clean_first, last_name=clean_last)
 
     def update_settings(
         self,
@@ -42,22 +54,14 @@ class UserService:
         notify_marketing: Optional[bool] = None,
     ) -> UserSettings:
         """Actualiza las preferencias de notificaciones del usuario."""
-        settings = user.settings
-        if not settings:
-            settings = UserSettings(user_id=user.id)
-            db.add(settings)
-            db.flush()
-
-        if notify_comments is not None:
-            settings.notify_comments = notify_comments
-        if notify_updates is not None:
-            settings.notify_updates = notify_updates
-        if notify_marketing is not None:
-            settings.notify_marketing = notify_marketing
-
-        db.commit()
-        db.refresh(settings)
-        return settings
+        repo = self._get_repo(db)
+        settings = repo.get_or_create_settings(user)
+        return repo.update_settings(
+            settings,
+            notify_comments=notify_comments,
+            notify_updates=notify_updates,
+            notify_marketing=notify_marketing,
+        )
 
     def start_trial(
         self,
@@ -65,23 +69,14 @@ class UserService:
         user: UserProfile,
     ) -> datetime:
         """Inicia un período de prueba de 14 días verificando que no haya sido utilizado previamente."""
-        settings = user.settings
-        if not settings:
-            settings = UserSettings(user_id=user.id)
-            db.add(settings)
-            db.flush()
+        repo = self._get_repo(db)
+        settings = repo.get_or_create_settings(user)
 
         if settings.is_subscription_active or settings.is_trial_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Ya posees una suscripción o período de prueba activo.",
-            )
+            raise ActiveTrialExistsError("Ya posees una suscripción o período de prueba activo.")
 
         if settings.trial_end_date:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Tu período de prueba gratuito ya ha sido utilizado (already been used).",
-            )
+            raise TrialAlreadyUsedError("Tu período de prueba gratuito ya ha sido utilizado (already been used).")
 
         now = datetime.now(timezone.utc)
         trial_end = now + timedelta(days=14)

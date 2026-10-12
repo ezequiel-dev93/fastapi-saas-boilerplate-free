@@ -11,7 +11,6 @@ from api.core.security import create_dev_access_token
 from api.modules.auth.schemas import (
     DevLoginRequest,
     DevLoginResponse,
-    DevUserOrg,
     DevUserRead,
 )
 from api.modules.users.models import UserProfile, UserSettings

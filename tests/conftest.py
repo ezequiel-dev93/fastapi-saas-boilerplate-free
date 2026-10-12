@@ -102,19 +102,15 @@ def client(db_session) -> Generator[TestClient, None, None]:
             pass
 
     from api.core.protocols.identity import MockIdentityProvider, reset_identity_provider, set_identity_provider
-    from api.modules.ai.services import AiChatService, get_ai_chat_service
-    from api.modules.organizations.api_key_service import ApiKeyService, get_api_key_service
+    from tests.fakes.auth import FakeApiKeyValidator
 
-    test_key_service = ApiKeyService(session_factory=lambda: NonClosingSession(db_session))
-    test_ai_service = AiChatService(session_factory=lambda: NonClosingSession(db_session))
+    test_key_service = FakeApiKeyValidator()
     test_idp = MockIdentityProvider()
     set_identity_provider(test_idp, force=True)
 
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[get_jwt_authenticator] = lambda: TestJwtAuthenticator()
     app.dependency_overrides[get_api_key_validator] = lambda: test_key_service
-    app.dependency_overrides[get_api_key_service] = lambda: test_key_service
-    app.dependency_overrides[get_ai_chat_service] = lambda: test_ai_service
 
     with TestClient(app) as test_client:
         yield test_client

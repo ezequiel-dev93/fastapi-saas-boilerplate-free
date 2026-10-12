@@ -29,6 +29,7 @@ from api.core.protocols.identity import (
     reset_identity_provider,
     set_identity_provider,
 )
+from api.core.protocols.email import EmailSenderProtocol
 from api.core.protocols.jwt import JwtAuthenticatorProtocol
 from api.core.protocols.payment import PaymentGatewayProtocol
 

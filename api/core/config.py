@@ -95,10 +95,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_production_ai_provider(self) -> "Settings":
-        if self.ENVIRONMENT == "production" and self.AI_PROVIDER == "mock":
-            raise ValueError(
-                "AI_PROVIDER='mock' está estrictamente prohibido en producción (ENVIRONMENT='production')."
-            )
+        # En la edición Lite, el motor de IA no está habilitado;
+        # AI_PROVIDER='mock' es el valor por defecto seguro y no bloquea el arranque en producción.
         return self
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore")

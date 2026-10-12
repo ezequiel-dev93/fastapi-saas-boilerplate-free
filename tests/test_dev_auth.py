@@ -6,7 +6,6 @@ from fastapi import HTTPException
 from api.core.config import settings
 from api.core.security import create_dev_access_token, verify_jwt_token
 from api.main import CognitoJwtAuthenticator
-from api.modules.organizations.models import Organization, OrganizationMember
 from api.modules.users.models import UserProfile
 
 
@@ -62,14 +61,6 @@ def test_list_dev_users_success(client, db_session):
         last_name="Two",
     )
     db_session.add_all([user1, user2])
-    db_session.flush()
-
-    org = Organization(name="Dev Org", slug="dev-org-test", owner_id=user1.id)
-    db_session.add(org)
-    db_session.flush()
-
-    membership = OrganizationMember(organization_id=org.id, user_id=user1.id, role="owner")
-    db_session.add(membership)
     db_session.commit()
 
     resp = client.get("/api/v1/auth/dev-users")
@@ -81,9 +72,9 @@ def test_list_dev_users_success(client, db_session):
     assert "dev2@example.com" in emails
 
     u1_entry = next(u for u in data if u["email"] == "dev1@example.com")
-    assert len(u1_entry["organizations"]) >= 1
-    assert u1_entry["organizations"][0]["slug"] == "dev-org-test"
-    assert u1_entry["organizations"][0]["role"] == "owner"
+    assert u1_entry["first_name"] == "Dev"
+    assert u1_entry["last_name"] == "One"
+    assert u1_entry["cognito_sub"] == "dev-sub-1"
 
 
 def test_dev_login_existing_user(client, db_session):

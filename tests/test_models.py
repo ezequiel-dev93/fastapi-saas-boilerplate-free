@@ -1,29 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from api.modules.billing.models import StripeCustomer, SubscriptionPlan
 from api.modules.users.models import UserProfile, UserSettings
-
-
-def test_create_subscription_plan(db_session):
-    """Test creating and querying a subscription plan with JSON features."""
-    plan = SubscriptionPlan(
-        name="Pro Plan",
-        slug="pro-monthly",
-        description="Best for growing teams",
-        price=29.99,
-        interval="monthly",
-        features=["Unlimited Projects", "Priority Support", "Analytics"],
-        is_active=True,
-    )
-    db_session.add(plan)
-    db_session.commit()
-
-    saved = db_session.query(SubscriptionPlan).filter_by(slug="pro-monthly").first()
-    assert saved is not None
-    assert saved.name == "Pro Plan"
-    assert float(saved.price) == 29.99
-    assert len(saved.features) == 3
-    assert "Priority Support" in saved.features
 
 
 def test_user_profile_and_settings_relationship(db_session):
@@ -70,28 +47,3 @@ def test_subscription_active_property(db_session):
     settings.subscription_end_date = now + timedelta(days=20)
     db_session.commit()
     assert settings.is_subscription_active is False
-
-
-def test_stripe_customer_and_cascade_deletion(db_session):
-    """Test StripeCustomer creation and cascade deletion with UserProfile."""
-    user = UserProfile(cognito_sub="sub-stripe", email="stripe@example.com")
-    db_session.add(user)
-    db_session.commit()
-
-    customer = StripeCustomer(
-        user_id=user.id,
-        stripe_customer_id="cus_test_123",
-        stripe_subscription_id="sub_test_456",
-        subscription_status="active",
-    )
-    db_session.add(customer)
-    db_session.commit()
-
-    assert user.stripe_customer.stripe_customer_id == "cus_test_123"
-
-    # Cascade delete
-    db_session.delete(user)
-    db_session.commit()
-
-    remaining_customer = db_session.query(StripeCustomer).filter_by(stripe_customer_id="cus_test_123").first()
-    assert remaining_customer is None

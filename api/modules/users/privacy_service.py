@@ -5,7 +5,6 @@ import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.modules.users.models import UserProfile
@@ -14,6 +13,10 @@ from api.modules.users.privacy_schemas import (
     ExportUserProfile,
     ExportUserSettings,
     UserDataExport,
+)
+from api.modules.users.repository import (
+    SqlAlchemyUserRepository,
+    UserRepositoryProtocol,
 )
 from api.worker import enqueue_job
 
@@ -25,7 +28,18 @@ def utcnow() -> datetime:
 
 
 class PrivacyService:
+    """Servicio de dominio para el cumplimiento de privacidad y GDPR (Art. 15, 17 y 20)."""
+
+    def __init__(self, repository: Optional[UserRepositoryProtocol] = None):
+        self._repository = repository
+
+    def _get_repo(self, db: Session) -> UserRepositoryProtocol:
+        if self._repository is not None:
+            return self._repository
+        return SqlAlchemyUserRepository(db)
+
     def export_user_data(self, db: Session, user: UserProfile) -> UserDataExport:
+        """Exporta los datos personales del usuario bajo GDPR (Derecho de Acceso y Portabilidad)."""
         user_export = ExportUserProfile(
             id=user.id,
             cognito_sub=user.cognito_sub,
@@ -61,21 +75,15 @@ class PrivacyService:
         db: Session,
         user: UserProfile,
     ) -> AccountDeletionResponse:
+        """Anonimiza y suprime la cuenta del usuario bajo GDPR Art. 17 (Derecho al Olvido)."""
         now = utcnow()
         saved_cognito_sub = user.cognito_sub
 
         anon_id = uuid.uuid4().hex[:12]
-        user.email = f"deleted_{anon_id}@deleted.invalid"
-        user.first_name = "Deleted"
-        user.last_name = "User"
-        user.deleted_at = now
+        anon_email = f"deleted_{anon_id}@deleted.invalid"
 
-        if user.settings:
-            user.settings.notify_comments = False
-            user.settings.notify_updates = False
-            user.settings.notify_marketing = False
-
-        db.commit()
+        repo = self._get_repo(db)
+        repo.soft_delete_user(user, anon_email=anon_email)
 
         try:
             await enqueue_job("task_finalize_account_deletion", cognito_sub=saved_cognito_sub)
@@ -89,6 +97,7 @@ _privacy_service_instance: Optional[PrivacyService] = None
 
 
 def get_privacy_service() -> PrivacyService:
+    """Inyector de dependencias para PrivacyService."""
     global _privacy_service_instance
     if _privacy_service_instance is None:
         _privacy_service_instance = PrivacyService()

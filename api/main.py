@@ -88,6 +88,11 @@ async def lifespan(app: FastAPI):
     # Configurar autenticador JWT real (force=True para permitir reconfiguración en tests)
     set_jwt_authenticator(CognitoJwtAuthenticator(), force=True)
 
+    # Configurar validador de API keys por defecto (Null Object en edición Lite)
+    from api.core.protocols.api_key_provider import NullApiKeyValidator, set_api_key_validator
+
+    set_api_key_validator(NullApiKeyValidator(), force=True)
+
     # Configurar proveedor de identidad (Cognito en producción, Mock en dev/test)
     from api.core.protocols.identity import (
         CognitoIdentityProvider,
@@ -124,6 +129,17 @@ app = FastAPI(
 # Conectar rate limiter y su manejador de excepciones (HTTP 429)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Manejador centralizado para excepciones de la capa de dominio
+from api.core.exceptions import DomainError
+
+
+@app.exception_handler(DomainError)
+async def domain_exception_handler(request: Request, exc: DomainError):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.message},
+    )
 
 # Middleware de trazabilidad con X-Request-ID y cálculo de latencias
 app.add_middleware(LoggingMiddleware)

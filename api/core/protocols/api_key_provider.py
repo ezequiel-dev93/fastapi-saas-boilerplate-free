@@ -5,6 +5,13 @@ from typing import Optional
 from api.core.protocols.api_key import ApiKeyValidatorProtocol, ValidatedApiKey
 from api.core.protocols.jwt import JwtAuthenticatorProtocol
 
+class NullApiKeyValidator(ApiKeyValidatorProtocol):
+    """Implementación por defecto (Null Object Pattern) para ediciones donde las API Keys de organizaciones no están habilitadas."""
+
+    async def validate(self, raw_key: str) -> ValidatedApiKey | None:
+        return None
+
+
 # Variables globales para los validadores (inyectadas al arrancar la app)
 _api_key_validator: Optional[ApiKeyValidatorProtocol] = None
 _jwt_authenticator: Optional[JwtAuthenticatorProtocol] = None
@@ -14,11 +21,12 @@ def get_api_key_validator() -> ApiKeyValidatorProtocol:
     """
     Dependencia FastAPI para obtener el validador de API keys.
 
-    En producción: retorna la implementación real (ApiKeyService).
-    En tests: se sobreecribe con app.dependency_overrides[get_api_key_validator] = fake_validator.
+    En producción/desarrollo lite: retorna NullApiKeyValidator por defecto si no hay otro configurado.
+    En tests o con módulo activo: se sobreescribe con set_api_key_validator() o app.dependency_overrides.
     """
+    global _api_key_validator
     if _api_key_validator is None:
-        raise RuntimeError("API key validator not configured. Call set_api_key_validator() at application startup.")
+        _api_key_validator = NullApiKeyValidator()
     return _api_key_validator
 
 

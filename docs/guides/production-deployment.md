@@ -37,16 +37,11 @@ AWS_REGION=us-east-1
 COGNITO_USER_POOL_ID=us-east-1_xxxxxxxxx
 COGNITO_APP_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxx
 
-# Stripe
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_ID=price_...
-
-# Emails Transaccionales (AWS SES)
+# Emails Transaccionales (AWS SES o SMTP)
 USE_DEV_SMTP=False
 SES_FROM_EMAIL=notificaciones@tudominio.com
 
-# Rate Limiting
+# Rate Limiting (SlowAPI)
 ENABLE_RATE_LIMIT=True
 RATE_LIMIT_DEFAULT="100/minute"
 ```
@@ -55,7 +50,7 @@ RATE_LIMIT_DEFAULT="100/minute"
 
 ## 3. Despliegue con Docker
 
-El proyecto incluye un [`Dockerfile`](file:///c:/Users/ezequ/Documents/software-projects/fastapi-saas-boilerplate/Dockerfile) optimizado para producción con Python 3.12:
+El proyecto incluye un [`Dockerfile`](file:///c:/Users/ezequ/Documents/software-projects/fastapi-saas-free/Dockerfile) optimizado para producción con Python 3.12:
 
 ### Construir la imagen localmente:
 ```bash

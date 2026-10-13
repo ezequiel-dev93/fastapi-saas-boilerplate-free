@@ -85,7 +85,7 @@ COGNITO_APP_CLIENT_ID=7abcdefgh1234567890ijklmn
 
 ## 6. ¿Cómo Valida los Tokens el Backend?
 
-El boilerplate implementa validación sin estado y de alto rendimiento en [`api/core/security.py`](file:///c:/Users/ezequ/Documents/software-projects/fastapi-saas-boilerplate/api/core/security.py):
+El boilerplate implementa validación sin estado y de alto rendimiento en [`api/core/security.py`](file:///c:/Users/ezequ/Documents/software-projects/fastapi-saas-free/api/core/security.py):
 
 1. **Descarga y Caché de Claves JWKS**: Consulta automáticamente el endpoint público:
    ```text

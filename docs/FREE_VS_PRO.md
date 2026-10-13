@@ -20,7 +20,7 @@ Este documento detalla las diferencias técnicas y funcionales entre la versión
 | **Emails Transaccionales** | ✅ 4 plantillas Jinja2 + galería `/dev/emails` | ✅ 8+ plantillas Jinja2 (Stripe, Dunning, Invitaciones B2B) |
 | **Observabilidad** | ✅ Logs estructurados JSON + Request ID | ✅ Logs JSON + OpenTelemetry + Métricas Prometheus |
 | **Frontend Dashboard** | ✅ Next.js 16 + Tailwind v4 + Dark/Light | ✅ Next.js 16 + Billing UI + Org Switcher + AI Playground |
-| **Pruebas Automatizadas** | ✅ **44 Tests (100% pasando)** | ✅ **170+ Tests (100% pasando)** |
+| **Pruebas Automatizadas** | ✅ **44 Tests (100% pasando)** | ✅ **183+ Tests (100% pasando)** |
 | **Multi-Tenancy B2B & Workspaces** | ❌ (Uso individual B2C / MVP) | ✅ Organizaciones, slugs, roles (Owner, Admin, Member), invitaciones |
 | **API Keys por Tenant** | ❌ (Solo tokens JWT) | ✅ `OrganizationApiKey` (`sk_live_...`), scopes granulares y SHA-256 |
 | **Facturación Recurrente (Stripe)** | ❌ (Solo contrato `PaymentGatewayProtocol`) | ✅ Checkout sessions, Customer Portal, Webhooks con deduplicación estricta |

@@ -3,7 +3,7 @@
 Esta es la **versión Lite / Open Source** del Boilerplate para SaaS en FastAPI. Te proporciona una base sólida y lista para producción para empezar a construir aplicaciones web modernas usando Python y React.
 
 > **¿Buscas la versión PRO?**
-> Ahórrate más de 40 horas de desarrollo con la **[Edición PRO de FastAPI SaaS](https://tu-enlace-de-lemonsqueezy.com)**. Incluye todo lo necesario para lanzar un SaaS de IA rentable este mismo fin de semana:
+> Ahórrate más de 40 horas de desarrollo con la **[Edición PRO de FastAPI SaaS](https://ezequiel-suarez-dev.lemonsqueezy.com)**. Incluye todo lo necesario para lanzar un SaaS de IA rentable este mismo fin de semana:
 > - 💳 **Integración con Stripe y LemonSqueezy** (Suscripciones, Webhooks, Portales)
 > - 🤖 **Integración con Anthropic Claude 3.5 y OpenAI** (Streaming, Límites de uso)
 > - 🏢 **Organizaciones Multi-tenant y Equipos** (Roles RBAC, Invitaciones)
@@ -11,7 +11,7 @@ Esta es la **versión Lite / Open Source** del Boilerplate para SaaS en FastAPI.
 > - 🎨 **Dashboard Premium en Next.js** con métricas avanzadas
 > - 🧪 **183 Tests Automatizados** (100% de Cobertura)
 > 
-> 👉 **[Consigue la Edición PRO Aquí](https://tu-enlace-de-lemonsqueezy.com)**
+> 👉 **[Consigue la Edición PRO Aquí](https://ezequiel-suarez-dev.lemonsqueezy.com)**
 
 ---
 
@@ -71,3 +71,14 @@ pnpm dev
 
 ## 📜 Licencia
 Esta Edición Lite es de código abierto y está disponible bajo la Licencia MIT.
+
+---
+
+## 👨‍💻 Autor y Contacto
+
+Creado por **Ezequiel** — Full Stack & Backend Engineer.
+
+- 🌐 **Portfolio:** [ezequielsuarez-dev.com](https://www.ezequielsuarez-dev.com/)
+- 💼 **LinkedIn:** [linkedin.com/in/ezequiel-suarez-dev](https://www.linkedin.com/in/ezequiel-suarez-dev/)
+- 🐙 **GitHub:** [ezequiel-dev93](https://github.com/ezequiel-dev93)
+- ✉️ **Contacto:** [ezequielsuarez.dev@gmail.com](mailto:ezequielsuarez.dev@gmail.com)

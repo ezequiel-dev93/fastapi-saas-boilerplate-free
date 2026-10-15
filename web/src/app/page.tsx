@@ -25,7 +25,7 @@ export default function FreeHomePage() {
           🚀 You are running the <strong className="text-[#FFFFFF]">Lite / Open Source Edition</strong>. Want Stripe, Claude 3.5 AI streaming & Multi-tenant teams?
         </span>{" "}
         <a
-          href="https://your-lemonsqueezy-link.com"
+          href="https://ezequiel-suarez-dev.lemonsqueezy.com"
           target="_blank"
           rel="noreferrer"
           className="text-[#D7FF00] font-bold underline underline-offset-2 ml-1 hover:text-[#c6eb00] inline-flex items-center gap-1"
@@ -165,7 +165,7 @@ export default function FreeHomePage() {
               <h3 className="text-2xl font-bold mt-1 text-[#FFFFFF]">Upgrade to the PRO Edition</h3>
             </div>
             <a
-              href="https://your-lemonsqueezy-link.com"
+              href="https://ezequiel-suarez-dev.lemonsqueezy.com"
               target="_blank"
               rel="noreferrer"
             >

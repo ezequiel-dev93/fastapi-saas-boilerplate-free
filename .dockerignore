@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env
+.venv
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+saas.db
+*.db
+tests/
+web/
+docs/
+.agents/

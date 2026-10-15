@@ -34,7 +34,7 @@ class UserProfile(Base):
 
     # Relationships
     settings: Mapped[Optional[UserSettings]] = relationship(
-        "UserSettings", back_populates="user", uselist=False, cascade="all, delete-orphan"
+        "UserSettings", back_populates="user", uselist=False, cascade="all, delete-orphan", lazy="joined"
     )
 
     def __repr__(self) -> str:
